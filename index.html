@@ -2,10 +2,9 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut the Rope - Jogo Completo</title>
+<title>Cut the Rope - Jogo</title>
 <style>
 body { font-family: Arial; text-align: center; background:#f2e0c9; }
-h1 { margin-top:20px; }
 .grid { display:grid; grid-template-columns: repeat(5, 80px); gap:10px; justify-content:center; }
 button { padding:10px; border:none; border-radius:10px; cursor:pointer; }
 .locked { background:#999; }
@@ -14,30 +13,48 @@ button { padding:10px; border:none; border-radius:10px; cursor:pointer; }
 .box { margin:20px auto; padding:15px; border-radius:15px; width:300px; background:#d9b38c; cursor:pointer; position:relative; }
 .hidden { display:none; }
 .starBtns { margin-top:20px; display:none; }
+.levelStars { font-size:12px; display:block; }
+#codeInput { display:none; margin:10px; padding:5px; }
 .lockOverlay {
   position:absolute; top:0; left:0; right:0; bottom:0;
   background:rgba(0,0,0,0.6); color:white;
   display:flex; align-items:center; justify-content:center;
-  border-radius:15px; font-size:20px; font-weight:bold;
-  pointer-events:none;
+  border-radius:15px;
 }
 </style>
 </head>
 <body>
 
-<h1>🍬 Cut the Rope - Jogo</h1>
+<h1>🍬 Cut the Rope</h1>
 
-<div class="box" onclick="toggle('season1')">
-<h2>📦 Caixa Inicial</h2>
+<button onclick="showCodeInput()">🔓 Inserir código</button><br>
+<input id="codeInput" placeholder="Código + Enter" onkeydown="checkCode(event)">
+
+<div class="box" onclick="toggle('s1')">
+<h3>📦 Caixa Inicial</h3>
 <div id="stars1"></div>
-<div class="grid hidden" id="season1" onclick="event.stopPropagation()"></div>
+<div class="grid hidden" id="s1" onclick="event.stopPropagation()"></div>
 </div>
 
-<div class="box" onclick="toggleSeason2()">
-<h2>✨ Magia e Saltos</h2>
+<div class="box" onclick="toggleS2()">
+<h3>✨ Magia e Saltos</h3>
 <div id="stars2"></div>
 <div id="lock2" class="lockOverlay"></div>
-<div class="grid hidden" id="season2" onclick="event.stopPropagation()"></div>
+<div class="grid hidden" id="s2" onclick="event.stopPropagation()"></div>
+</div>
+
+<div class="box" onclick="toggleS3()">
+<h3>⚠️ Perigos</h3>
+<div id="stars3"></div>
+<div id="lock3" class="lockOverlay"></div>
+<div class="grid hidden" id="s3" onclick="event.stopPropagation()"></div>
+</div>
+
+<div class="box" onclick="toggleS4()">
+<h3>🌌 Distância e Gravidade</h3>
+<div id="stars4"></div>
+<div id="lock4" class="lockOverlay"></div>
+<div class="grid hidden" id="s4" onclick="event.stopPropagation()"></div>
 </div>
 
 <div class="starBtns" id="starBtns">
@@ -47,149 +64,102 @@ button { padding:10px; border:none; border-radius:10px; cursor:pointer; }
 </div>
 
 <br>
-<button onclick="startMusic()">🎵 Ligar Música</button>
-<button onclick="resetProgress()">🗑️ Eliminar progresso</button>
-
-<audio id="music" loop>
-<source src="https://cdn.pixabay.com/audio/2022/03/15/audio_5b3f6f5d7e.mp3">
-</audio>
+<button onclick="resetProgress()">🗑️ Reset</button>
 
 <script>
-const season1 = [
-"https://play.candies.monster/lTDT",
-"https://play.candies.monster/NHXI",
-"https://play.candies.monster/ePeK",
-"https://play.candies.monster/DzSE",
-"https://play.candies.monster/yxRy",
-"https://play.candies.monster/UxTs",
-"https://play.candies.monster/IjFf",
-"https://play.candies.monster/mmqQ",
-"https://play.candies.monster/tlue",
-"https://play.candies.monster/WBjF",
-"https://play.candies.monster/hniT",
-"https://play.candies.monster/QOLQ",
-"https://play.candies.monster/SfsN",
-"https://play.candies.monster/Rbkz",
-"https://play.candies.monster/dKXr"
-];
+const s1=["https://play.candies.monster/lTDT","https://play.candies.monster/NHXI","https://play.candies.monster/ePeK","https://play.candies.monster/DzSE","https://play.candies.monster/yxRy","https://play.candies.monster/UxTs","https://play.candies.monster/IjFf","https://play.candies.monster/mmqQ","https://play.candies.monster/tlue","https://play.candies.monster/WBjF","https://play.candies.monster/hniT","https://play.candies.monster/QOLQ","https://play.candies.monster/SfsN","https://play.candies.monster/Rbkz","https://play.candies.monster/dKXr"];
 
-const season2 = [
-"https://play.candies.monster/rEgN",
-"https://play.candies.monster/aVzu",
-"https://play.candies.monster/dzxy",
-"https://play.candies.monster/bPDj",
-"https://play.candies.monster/Aelr",
-"https://play.candies.monster/Tejh",
-"https://play.candies.monster/UgbA",
-"https://play.candies.monster/dOkj",
-"https://play.candies.monster/oQrx",
-"https://play.candies.monster/HAJA"
-];
+const s2=["https://play.candies.monster/rEgN","https://play.candies.monster/aVzu","https://play.candies.monster/dzxy","https://play.candies.monster/bPDj","https://play.candies.monster/Aelr","https://play.candies.monster/Tejh","https://play.candies.monster/UgbA","https://play.candies.monster/dOkj","https://play.candies.monster/MGPv","https://play.candies.monster/HAJA"];
 
-let progress = parseInt(localStorage.getItem("progress")) || 1;
-let stars = JSON.parse(localStorage.getItem("stars")) || {};
+const s3=["https://play.candies.monster/vzhJ","https://play.candies.monster/crLu","https://play.candies.monster/DqOJ","https://play.candies.monster/pdWX","https://play.candies.monster/SCXl","https://play.candies.monster/fudQ","https://play.candies.monster/Vwsm","https://play.candies.monster/ivfp","https://play.candies.monster/CsYA","https://play.candies.monster/Dcro"];
 
-function toggle(id){
-  document.getElementById(id).classList.toggle("hidden");
+const s4=["https://play.candies.monster/MjBA","https://play.candies.monster/oxMQ","https://play.candies.monster/KJXf","https://play.candies.monster/azSz","https://play.candies.monster/LDSu","https://play.candies.monster/WUlG","https://play.candies.monster/qarR","https://play.candies.monster/puVd","https://play.candies.monster/OWQI","https://play.candies.monster/lQzu"];
+
+let progress=parseInt(localStorage.getItem("progress"))||1;
+let stars=JSON.parse(localStorage.getItem("stars"))||{};
+
+function showCodeInput(){document.getElementById("codeInput").style.display="inline";}
+
+function checkCode(e){
+ if(e.key==="Enter" && e.target.value==="Zeptolab"){
+  progress=100;
+  for(let i=1;i<=45;i++) stars[i]=3;
+  localStorage.setItem("progress",progress);
+  localStorage.setItem("stars",JSON.stringify(stars));
+  location.reload();
+ }
 }
 
-function totalStars(){
-  let total = 0;
-  for (let k in stars) total += stars[k];
-  return total;
-}
+function toggle(id){document.getElementById(id).classList.toggle("hidden");}
+function totalStars(){let t=0;for(let k in stars)t+=stars[k];return t;}
 
-function toggleSeason2(){
-  if(totalStars() >= 35){
-    toggle('season2');
-  }
-}
+function toggleS2(){if(totalStars()>=35)toggle('s2');}
+function toggleS3(){if(totalStars()>=70)toggle('s3');}
+function toggleS4(){if(totalStars()>=105)toggle('s4');}
 
-function createLevels(list, containerId, offset) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
+function create(list,id,offset){
+ let c=document.getElementById(id); c.innerHTML="";
+ list.forEach((link,i)=>{
+  let lvl=i+1+offset;
+  let b=document.createElement("button");
+  b.innerHTML=(i+1)+"<span class='levelStars'>"+(stars[lvl]?"⭐".repeat(stars[lvl]):"")+"</span>";
 
-  list.forEach((link, i) => {
-    const levelNum = i + 1 + offset;
+  if(lvl<progress)b.className="completed";
+  else if(lvl===progress)b.className="unlocked";
+  else b.className="locked";
 
-    const btn = document.createElement("button");
-    btn.innerText = i+1;
-
-    if (levelNum < progress) {
-      btn.className = "completed";
-    } else if (levelNum === progress) {
-      btn.className = "unlocked";
-    } else {
-      btn.className = "locked";
-    }
-
-    btn.onclick = (e) => {
-      e.stopPropagation();
-
-      if(levelNum <= progress){
-        localStorage.setItem("currentLevel", levelNum);
-
-        const a = document.createElement('a');
-        a.href = link;
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        document.getElementById("starBtns").style.display = "block";
-      }
-    };
-
-    container.appendChild(btn);
-  });
+  b.onclick=(e)=>{
+   e.stopPropagation();
+   if(lvl<=progress){
+    localStorage.setItem("currentLevel",lvl);
+    window.open(link,'_blank');
+    document.getElementById("starBtns").style.display="block";
+   }
+  };
+  c.appendChild(b);
+ });
 }
 
 function finish(n){
-  let lvl = parseInt(localStorage.getItem("currentLevel"));
-
-  if(lvl === progress){
-    stars[lvl] = n;
-    progress++;
-
-    localStorage.setItem("progress", progress);
-    localStorage.setItem("stars", JSON.stringify(stars));
-
-    location.reload();
-  }
-}
-
-function resetProgress(){
-  localStorage.clear();
+ let lvl=parseInt(localStorage.getItem("currentLevel"));
+ if(lvl){
+  stars[lvl]=n;
+  if(lvl===progress){progress++;localStorage.setItem("progress",progress);} 
+  localStorage.setItem("stars",JSON.stringify(stars));
   location.reload();
+ }
 }
 
-function updateStars() {
-  let s1 = 0, s2 = 0;
+function resetProgress(){localStorage.clear();location.reload();}
 
-  for (let i = 1; i <= 15; i++) if (stars[i]) s1 += stars[i];
-  for (let i = 16; i <= 25; i++) if (stars[i]) s2 += stars[i];
+function update(){
+ let t=[0,0,0,0];
+ for(let i in stars){
+  let v=stars[i],lvl=parseInt(i);
+  if(lvl<=15)t[0]+=v;
+  else if(lvl<=25)t[1]+=v;
+  else if(lvl<=35)t[2]+=v;
+  else if(lvl<=45)t[3]+=v;
+ }
+ document.getElementById("stars1").innerText="⭐ "+t[0]+"/45";
+ document.getElementById("stars2").innerText="⭐ "+t[1]+"/30";
+ document.getElementById("stars3").innerText="⭐ "+t[2]+"/30";
+ document.getElementById("stars4").innerText="⭐ "+t[3]+"/30";
 
-  document.getElementById("stars1").innerText = "⭐ " + s1 + " / 45";
-  document.getElementById("stars2").innerText = "⭐ " + s2 + " / 30";
-
-  let needed = 35 - totalStars();
-  let lock = document.getElementById("lock2");
-
-  if(needed > 0){
-    lock.innerText = needed + " ⭐";
-    lock.style.display = "flex";
-  } else {
-    lock.style.display = "none";
-  }
+ let locks=[35,70,105];
+ ["lock2","lock3","lock4"].forEach((id,i)=>{
+  let need=locks[i]-totalStars();
+  let el=document.getElementById(id);
+  el.style.display=need>0?"flex":"none";
+  el.innerText=need>0?need+" ⭐":"";
+ });
 }
 
-function startMusic(){
-  document.getElementById("music").play();
-}
-
-createLevels(season1, "season1", 0);
-createLevels(season2, "season2", 15);
-updateStars();
+create(s1,"s1",0);
+create(s2,"s2",15);
+create(s3,"s3",25);
+create(s4,"s4",35);
+update();
 </script>
 
 </body>
