@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut the Rope 7.0</title>
+<title>Cut the Rope 8.0</title>
 <style>
 body{font-family:Arial;text-align:center;background:#f2e0c9;margin:0}
 .box{margin:18px auto;padding:14px;border-radius:16px;width:320px;background:#d9b38c;cursor:pointer;position:relative;transition:transform .2s ease}
@@ -15,17 +15,20 @@ button:hover{transform:scale(1.08)}
 .hidden{display:none}
 .lockOverlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:16px;font-weight:bold}
 .starBtns{margin:20px auto;background:#fff;padding:10px;border-radius:12px;width:240px}
+#end{display:none;padding:30px}
 @media(max-width:600px){.grid{grid-template-columns:repeat(4,60px)}.box{width:92%}}
 </style>
 </head>
 <body>
-<h1>🍬 Cut the Rope 7.0</h1>
+<h1>🍬 Cut the Rope 8.0</h1>
 
 <button onclick="toggleMusic()">🎵 Música</button>
 <button onclick="showCode()">🔓 Código</button>
 <input id="code" placeholder="Escreve código" style="display:none" onkeydown="applyCode(event)">
 
 <audio id="music" loop preload="none"></audio>
+<audio id="winSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c9b8c0d8e5.mp3"></audio>
+<audio id="boxSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2b7c3e2f5c.mp3"></audio>
 
 <!-- CAIXAS -->
 <div class="box" onclick="toggle('s1')"><h3>📦 Caixa Inicial</h3><div id="l1"></div><div id="s1" class="grid hidden"></div></div>
@@ -35,10 +38,10 @@ button:hover{transform:scale(1.08)}
 <div class="box" onclick="openBox(5)"><h3>☠️ Zona de Risco</h3><div id="l5" class="lockOverlay"></div><div id="s5" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(6)"><h3>🎧 Fase Fantasma</h3><div id="l6" class="lockOverlay"></div><div id="s6" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(7)"><h3>🏮 Lanternas</h3><div id="l7" class="lockOverlay"></div><div id="s7" class="grid hidden"></div></div>
-<!-- NOVA CAIXA 8 -->
 <div class="box" onclick="openBox(8)"><h3>🐭 Ratos do Queijo</h3><div id="l8" class="lockOverlay"></div><div id="s8" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(9)"><h3>💡 Noite & Lâmpadas</h3><div id="l9" class="lockOverlay"></div><div id="s9" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(10)"><h3>⚙️ Mecânica</h3><div id="l10" class="lockOverlay"></div><div id="s10" class="grid hidden"></div></div>
 
-<!-- ⭐ BOTÕES -->
 <div class="starBtns" id="starsUI">
 <b>Dar estrelas ao último nível jogado:</b><br>
 <button onclick="finish(1)">⭐</button>
@@ -48,8 +51,13 @@ button:hover{transform:scale(1.08)}
 
 <button onclick="reset()">🗑️ Reset</button>
 
+<div id="end">
+<h2>🎉 Obrigado por jogar!</h2>
+<p>🍬🍬🍬</p>
+<p style="font-size:40px">🐸</p>
+</div>
+
 <script>
-// LINKS
 const boxes=[
 ["lTDT","NHXI","ePeK","DzSE","yxRy","UxTs","IjFf","mmqQ","tlue","WBjF","hniT","QOLQ","SfsN","Rbkz","dKXr"],
 ["rEgN","aVzu","dzxy","bPDj","Aelr","Tejh","UgbA","dOkj","MGPv","HAJA"],
@@ -58,11 +66,12 @@ const boxes=[
 ["LvMb","jfwi","AnPf","uMeP","SztJ","fMSX","wlSF","MOpo","uros","IzjJ","KMuA","ZWwI","SaLm","khhV","jzCD"],
 ["AtWJ","ykvr","WNHq","wPBg","bzXb","lSap","DXIi","eFUq","QLJo","wlBP","nZvA","dpMi","yTjv","izUV","InJY"],
 ["RIto","iYNG","rqAJ","pNvp","Qpbz","BjAH","gbuN","MtHw","nlxn","gRVA"],
-["YPRM","qsNY","WDtF","AyKP","rBPN","FYMV","Wmku","wLQl","AMZK","TvJd"]
+["YPRM","qsNY","WDtF","AyKP","rBPN","FYMV","Wmku","wLQl","AMZK","TvJd"],
+["qgeC","bbyM","fUcv","foRo","zngG","OGhE","HCNj","TTCn","SzqK","sREM"],
+["ZcMI","heut","ioKZ","ysZQ","cFHv","hwVA","CKjf","oWzO","jcXU","kCSC"]
 ];
 
-// ESTRELAS PARA DESBLOQUEAR (mantém as anteriores e adiciona a 8ª)
-const need=[0,35,70,95,125,170,210,240];
+const need=[0,35,70,95,125,170,210,240,270,300];
 
 let progress=parseInt(localStorage.getItem("p"))||1;
 let stars=JSON.parse(localStorage.getItem("s"))||{};
@@ -72,6 +81,7 @@ function toggle(id){document.getElementById(id).classList.toggle("hidden")}
 
 function openBox(n){
  if(totalStars()<need[n-1]) return;
+ document.getElementById("boxSound").play().catch(()=>{});
  toggle('s'+n);
 }
 
@@ -105,12 +115,18 @@ function finish(n){
  if(lvl>=progress) progress=lvl+1;
  localStorage.setItem("p",progress);
  localStorage.setItem("s",JSON.stringify(stars));
- alert("⭐ Guardadas!");
+ document.getElementById("winSound").play().catch(()=>{});
+ checkEnd();
  location.reload();
 }
 
+function checkEnd(){
+ let total=0; boxes.forEach(b=> total+=b.length);
+ if(progress>total){ document.getElementById("end").style.display="block"; }
+}
+
 function updateLocks(){
- for(let i=1;i<=8;i++){
+ for(let i=1;i<=10;i++){
   let needStars=need[i-1]-totalStars();
   let el=document.getElementById('l'+i);
   if(i==1){el.style.display="none";continue;}
@@ -119,14 +135,13 @@ function updateLocks(){
  }
 }
 
-// MÚSICA FUNCIONAL (user gesture)
 function toggleMusic(){
  let m=document.getElementById("music");
  if(!m.src){
-  m.src="https://cdn.pixabay.com/download/audio/2021/09/06/audio_8a2c5b2d2b.mp3"; // instrumental estilo jogo
+  m.src="https://cdn.pixabay.com/download/audio/2021/09/06/audio_8a2c5b2d2b.mp3";
   m.load();
  }
- if(m.paused){ m.play().catch(()=>alert("Clica outra vez para ativar a música")); }
+ if(m.paused){ m.play().catch(()=>alert("Clica outra vez")); }
  else{ m.pause(); }
 }
 
@@ -148,6 +163,7 @@ function reset(){localStorage.clear();location.reload()}
 
 build();
 updateLocks();
+checkEnd();
 </script>
 </body>
 </html>
