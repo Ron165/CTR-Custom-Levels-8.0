@@ -5,9 +5,11 @@
 <title>Cut the Rope 9.1</title>
 <style>
 body{font-family:Arial;text-align:center;background:#f2e0c9;margin:0}
-.box{margin:18px auto;padding:14px;border-radius:16px;width:320px;background:#d9b38c;cursor:pointer;position:relative}
+.box{margin:18px auto;padding:14px;border-radius:16px;width:320px;background:#d9b38c;cursor:pointer;position:relative;transition:all .25s ease;box-shadow:0 4px 10px rgba(0,0,0,.15)}
+.box:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 18px rgba(0,0,0,.25)}
 .grid{display:grid;grid-template-columns:repeat(5,60px);gap:8px;justify-content:center}
-button{padding:8px;border:none;border-radius:10px;cursor:pointer}
+button{padding:8px;border:none;border-radius:10px;cursor:pointer;transition:all .18s ease}
+button:hover{transform:scale(1.08)}
 .unlocked{background:#3498db;color:#fff}
 .locked{background:#7f8c8d}
 .hidden{display:none}
@@ -38,6 +40,8 @@ button{padding:8px;border:none;border-radius:10px;cursor:pointer}
 <div class="box" onclick="openBox(8)"><h3>🐭 Ratos</h3><div id="l8" class="lockOverlay"></div><div id="s8" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(9)"><h3>💡 Noite</h3><div id="l9" class="lockOverlay"></div><div id="s9" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(10)"><h3>⚙️ Mecânica</h3><div id="l10" class="lockOverlay"></div><div id="s10" class="grid hidden"></div></div>
+
+<div class="box" onclick="openRevisions()"><h3>🛠️ Caixa de Revisões (WIP)</h3><div id="l11" class="lockOverlay">WIP<br>Espera pela próxima versão<br>ou desbloqueia com o código</div><div id="s11" class="grid hidden"></div></div>
 </div>
 
 <button onclick="resetProgress()">🗑️ Reset</button>
@@ -59,7 +63,8 @@ const boxes=[
 ["RIto","iYNG","rqAJ","pNvp","Qpbz","BjAH","gbuN","MtHw","nlxn","gRVA"],
 ["YPRM","qsNY","WDtF","AyKP","rBPN","FYMV","Wmku","wLQl","AMZK","TvJd"],
 ["qgeC","bbyM","fUcv","foRo","zngG","OGhE","HCNj","TTCn","SzqK","sREM"],
-["ZcMI","heut","ioKZ","ysZQ","cFHv","hwVA","CKjf","oWzO","jcXU","kCSC"]
+["ZcMI","heut","ioKZ","ysZQ","cFHv","hwVA","CKjf","oWzO","jcXU","kCSC"],
+["lfvw","GYJz","BSbp","IyYA","CBzO","TsTk","InGz","VHJm","vcVp","zNMr","klMI","cghk","uCyi","OIxT","tCTP","xotj","xcfp","fIgP","Bxhw","TuKG","VESv","Ufxb","cKOK","VHwC","AAUs","rpsn","KFzp","eVog","rUsM","XWMj"]
 ];
 
 // REGRAS DE ESTRELAS
@@ -79,6 +84,11 @@ function canOpenBox(n){
  if(n<=5){ return totalStars()>=season1Needs[n-1]; }
  if(n==6){ return totalStars()>=season2Unlock; }
  if(n>6){ return season2Stars()>=season2Needs[n-6]; }
+}
+
+function openRevisions(){
+ if(localStorage.getItem("revUnlocked")!=="yes") return;
+ toggle('s11');
 }
 
 function openBox(n){
@@ -152,7 +162,8 @@ function showCode(){document.getElementById("code").style.display="inline"}
 function applyCode(e){
  if(e.key==="Enter" && e.target.value==="Zeptolab"){
   let total=0; boxes.forEach(b=> total+=b.length);
-  for(let i=1;i<=total;i++){stars[i]=3;}
+  for(let i=1;i<=total+30;i++){stars[i]=3;}
+  localStorage.setItem("revUnlocked","yes");
   progress=999;
   localStorage.setItem("p",progress);
   localStorage.setItem("s",JSON.stringify(stars));
