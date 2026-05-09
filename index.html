@@ -2,182 +2,574 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut the Rope 9.1</title>
+<title>Cut The Rope Custom</title>
+
 <style>
-body{font-family:Arial;text-align:center;background:#f2e0c9;margin:0}
-.box{margin:18px auto;padding:14px;border-radius:16px;width:320px;background:#d9b38c;cursor:pointer;position:relative;transition:all .25s ease;box-shadow:0 4px 10px rgba(0,0,0,.15)}
-.box:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 18px rgba(0,0,0,.25)}
-.grid{display:grid;grid-template-columns:repeat(5,60px);gap:8px;justify-content:center}
-button{padding:8px;border:none;border-radius:10px;cursor:pointer;transition:all .18s ease}
-button:hover{transform:scale(1.08)}
-.unlocked{background:#3498db;color:#fff}
-.locked{background:#7f8c8d}
-.hidden{display:none}
-.lockOverlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:16px;font-weight:bold}
-.starBtns{margin:20px auto;background:#fff;padding:10px;border-radius:12px;width:240px}
+
+body{
+ background:#f4e3c3;
+ font-family:Arial;
+ text-align:center;
+ margin:0;
+ padding:20px;
+}
+
+h1,h2{
+ color:#3b2a1a;
+}
+
+.box{
+ background:#c79b6b;
+ width:340px;
+ margin:20px auto;
+ border-radius:20px;
+ padding:15px;
+ position:relative;
+ box-shadow:0 5px 12px rgba(0,0,0,.2);
+ transition:.2s;
+}
+
+.box:hover{
+ transform:scale(1.02);
+}
+
+.lock{
+ position:absolute;
+ inset:0;
+ background:rgba(0,0,0,.6);
+ color:white;
+ border-radius:20px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:22px;
+ font-weight:bold;
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(5,55px);
+ gap:8px;
+ justify-content:center;
+ margin-top:10px;
+}
+
+.level{
+ height:55px;
+ border:none;
+ border-radius:12px;
+ background:#3498db;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.level:hover{
+ transform:scale(1.05);
+}
+
+.lockedLevel{
+ background:#777;
+}
+
+.hidden{
+ display:none;
+}
+
+#revisionBox{
+ margin-top:80px;
+}
+
+.controls{
+ margin-top:30px;
+}
+
+.starBtn{
+ font-size:22px;
+ margin:5px;
+ cursor:pointer;
+}
+
+#codeInput{
+ margin-top:10px;
+ padding:8px;
+ border-radius:8px;
+ border:none;
+}
+
 </style>
 </head>
+
 <body>
-<h1>🍬 Cut the Rope 9.1</h1>
 
-<button onclick="startMusic()">🎵 Música</button>
+<h1>🍬 Cut The Rope Custom</h1>
+
+<button onclick="music()">🎵 Música</button>
 <button onclick="showCode()">🔓 Código</button>
-<input id="code" placeholder="Escreve código" style="display:none" onkeydown="applyCode(event)">
 
-<audio id="music" loop></audio>
+<div>
+<input
+ id="codeInput"
+ class="hidden"
+ placeholder="Código..."
+ onkeydown="code(event)"
+>
+</div>
 
 <h2>🌟 Temporada 1</h2>
-<div class="box" onclick="toggle('s1')"><h3>📦 Caixa Inicial</h3><div id="l1"></div><div id="s1" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(2)"><h3>✨ Magia</h3><div id="l2" class="lockOverlay"></div><div id="s2" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(3)"><h3>⚠️ Perigos</h3><div id="l3" class="lockOverlay"></div><div id="s3" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(4)"><h3>🌌 Distância</h3><div id="l4" class="lockOverlay"></div><div id="s4" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(5)"><h3>☠️ Zona de Risco</h3><div id="l5" class="lockOverlay"></div><div id="s5" class="grid hidden"></div></div>
 
-<h2 id="season2Title">🔒 Temporada 2</h2>
-<div id="season2">
-<div class="box" onclick="openBox(6)"><h3>🎧 Fase Fantasma</h3><div id="l6" class="lockOverlay"></div><div id="s6" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(7)"><h3>🏮 Lanternas</h3><div id="l7" class="lockOverlay"></div><div id="s7" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(8)"><h3>🐭 Ratos</h3><div id="l8" class="lockOverlay"></div><div id="s8" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(9)"><h3>💡 Noite</h3><div id="l9" class="lockOverlay"></div><div id="s9" class="grid hidden"></div></div>
-<div class="box" onclick="openBox(10)"><h3>⚙️ Mecânica</h3><div id="l10" class="lockOverlay"></div><div id="s10" class="grid hidden"></div></div>
-
-<div class="box" onclick="openRevisions()"><h3>🛠️ Caixa de Revisões (WIP)</h3><div id="l11" class="lockOverlay">WIP<br>Espera pela próxima versão<br>ou desbloqueia com o código</div><div id="s11" class="grid hidden"></div></div>
+<div class="box">
+<h3 onclick="toggle('b1')">📦 Caixa Inicial</h3>
+<div id="b1" class="grid"></div>
 </div>
 
-<button onclick="resetProgress()">🗑️ Reset</button>
-
-<div class="starBtns">
-<button onclick="finish(1)">⭐</button>
-<button onclick="finish(2)">⭐⭐</button>
-<button onclick="finish(3)">⭐⭐⭐</button>
+<div class="box">
+<h3 onclick="openSeason1(2,'b2')">✨ Magia</h3>
+<div id="lock2" class="lock">35 ⭐</div>
+<div id="b2" class="grid hidden"></div>
 </div>
+
+<div class="box">
+<h3 onclick="openSeason1(3,'b3')">⚠️ Perigos</h3>
+<div id="lock3" class="lock">70 ⭐</div>
+<div id="b3" class="grid hidden"></div>
+</div>
+
+<div class="box">
+<h3 onclick="openSeason1(4,'b4')">🌌 Distância</h3>
+<div id="lock4" class="lock">100 ⭐</div>
+<div id="b4" class="grid hidden"></div>
+</div>
+
+<div class="box">
+<h3 onclick="openSeason1(5,'b5')">☠️ Zona de Risco</h3>
+<div id="lock5" class="lock">130 ⭐</div>
+<div id="b5" class="grid hidden"></div>
+</div>
+
+<h2 id="s2title">🔒 Temporada 2</h2>
+
+<div class="box">
+<h3 onclick="openSeason2(6,'b6')">👻 Fase Fantasma</h3>
+<div id="lock6" class="lock">180 ⭐</div>
+<div id="b6" class="grid hidden"></div>
+</div>
+
+<div class="box">
+<h3 onclick="openSeason2Extra(7,'b7',40)">🏮 Lanternas</h3>
+<div id="lock7" class="lock">40 ⭐</div>
+<div id="b7" class="grid hidden"></div>
+</div>
+
+<div class="box">
+<h3 onclick="openSeason2Extra(8,'b8',70)">🐭 Ratos</h3>
+<div id="lock8" class="lock">70 ⭐</div>
+<div id="b8" class="grid hidden"></div>
+</div>
+
+<div class="box">
+<h3 onclick="openSeason2Extra(9,'b9',100)">💡 Noite</h3>
+<div id="lock9" class="lock">100 ⭐</div>
+<div id="b9" class="grid hidden"></div>
+</div>
+
+<div class="box">
+<h3 onclick="openSeason2Extra(10,'b10',130)">⚙️ Mecânica</h3>
+<div id="lock10" class="lock">130 ⭐</div>
+<div id="b10" class="grid hidden"></div>
+</div>
+
+<div id="revisionBox" class="box">
+<h3 onclick="toggle('b11')">🛠️ Caixa Revisões</h3>
+<div id="b11" class="grid hidden"></div>
+</div>
+
+<div class="controls">
+
+<h3>⭐ Dar estrelas</h3>
+
+<button class="starBtn" onclick="giveStars(1)">⭐</button>
+<button class="starBtn" onclick="giveStars(2)">⭐⭐</button>
+<button class="starBtn" onclick="giveStars(3)">⭐⭐⭐</button>
+
+<br><br>
+
+<button onclick="reset()">🗑️ Reset</button>
+
+</div>
+
+<audio id="bgm" loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=fun-game-loop-140bpm-8717.mp3">
+</audio>
 
 <script>
-const boxes=[
-["lTDT","NHXI","ePeK","DzSE","yxRy","UxTs","IjFf","mmqQ","tlue","WBjF","hniT","QOLQ","SfsN","Rbkz","dKXr"],
-["rEgN","aVzu","dzxy","bPDj","Aelr","Tejh","UgbA","dOkj","MGPv","HAJA"],
-["vzhJ","crLu","DqOJ","pdWX","SCXl","YdIg","Vwsm","ivfp","CsYA","Dcro"],
-["MjBA","oxMQ","KJXf","azSz","LDSu","WUlG","qarR","puVd","OWQI","lQzu"],
-["LvMb","jfwi","AnPf","uMeP","SztJ","fMSX","wlSF","MOpo","uros","IzjJ","KMuA","ZWwI","SaLm","bWXO","jzCD"],
-["AtWJ","ykvr","WNHq","wPBg","bzXb","hoSu","DXIi","eFUq","QLJo","wlBP","nZvA","dpMi","yTjv","izUV","InJY"],
-["RIto","iYNG","rqAJ","pNvp","Qpbz","BjAH","gbuN","MtHw","nlxn","gRVA"],
-["YPRM","qsNY","WDtF","AyKP","rBPN","FYMV","Wmku","wLQl","AMZK","TvJd"],
-["qgeC","bbyM","fUcv","foRo","zngG","OGhE","HCNj","TTCn","SzqK","sREM"],
-["ZcMI","heut","ioKZ","ysZQ","cFHv","hwVA","CKjf","oWzO","jcXU","kCSC"],
-["lfvw","GYJz","BSbp","IyYA","CBzO","TsTk","InGz","VHJm","vcVp","zNMr","klMI","cghk","uCyi","OIxT","tCTP","xotj","xcfp","fIgP","Bxhw","TuKG","VESv","Ufxb","cKOK","VHwC","AAUs","rpsn","KFzp","eVog","rUsM","XWMj"]
+
+const boxes = {
+
+1:[
+"lTDT","NHXI","ePeK","DzSE","yxRy",
+"UxTs","IjFf","mmqQ","tlue","WBjF",
+"hniT","QOLQ","SfsN","Rbkz","dKXr"
+],
+
+2:[
+"rEgN","aVzu","dzxy","bPDj","Aelr",
+"Tejh","UgbA","dOkj","MGPv","HAJA"
+],
+
+3:[
+"vzhJ","crLu","DqOJ","pdWX","SCXl",
+"YdIg","Vwsm","ivfp","CsYA","Dcro"
+],
+
+4:[
+"MjBA","oxMQ","KJXf","azSz","LDSu",
+"WUlG","qarR","puVd","OWQI","lQzu"
+],
+
+5:[
+"LvMb","jfwi","AnPf","uMeP","SztJ",
+"fMSX","wlSF","MOpo","uros","IzjJ",
+"KMuA","ZWwI","SaLm","bWXO","jzCD"
+],
+
+6:[
+"AtWJ","ykvr","WNHq","wPBg","bzXb",
+"hoSu","DXIi","eFUq","QLJo","wlBP",
+"nZvA","dpMi","yTjv","izUV","InJY"
+],
+
+7:[
+"RIto","iYNG","rqAJ","pNvp","Qpbz",
+"BjAH","gbuN","MtHw","nlxn","gRVA"
+],
+
+8:[
+"YPRM","qsNY","WDtF","AyKP","rBPN",
+"FYMV","Wmku","wLQl","AMZK","TvJd"
+],
+
+9:[
+"qgeC","bbyM","fUcv","foRo","zngG",
+"OGhE","HCNj","TTCn","SzqK","sREM"
+],
+
+10:[
+"ZcMI","heut","ioKZ","ysZQ","cFHv",
+"hwVA","CKjf","oWzO","jcXU","kCSC"
+]
+
+};
+
+const revisions = [
+["lfvw",3],["GYJz",9],["BSbp",9],["IyYA",15],
+["CBzO",15],["vcVp",18],["TsTk",21],["zNMr",21],
+["klMI",33],["cghk",33],["uCyi",33],["OIxT",48],
+["xotj",66],["InGz",78],["VHJm",78],["xcfp",78],
+["fIgP",78],["Bxhw",78],["TuKG",78],["cKOK",87],
+["eVog",96],["VESv",108],["Ufxb",108],["VHwC",108],
+["AAUs",123],["rpsn",123],["KFzp",138],["rUsM",138],
+["tCTP",150],["XWMj",180]
 ];
 
-// REGRAS DE ESTRELAS
-const season1Needs=[0,35,70,100,130];
-const season2Unlock=135;
-const season2Needs=[0,40,70,100,130];
+let stars =
+JSON.parse(localStorage.getItem("stars")) || {};
 
-let progress=parseInt(localStorage.getItem("p"))||1;
-let stars=JSON.parse(localStorage.getItem("s"))||{};
+let unlocked =
+parseInt(localStorage.getItem("unlock")) || 1;
 
-function totalStars(){let t=0;for(let k in stars)t+=stars[k];return t}
-function season2Stars(){return Math.max(0,totalStars()-season2Unlock)}
-function toggle(id){document.getElementById(id).classList.toggle("hidden")}
+let current =
+parseInt(localStorage.getItem("current")) || 1;
 
-function canOpenBox(n){
- if(n==1) return true;
- if(n<=5){ return totalStars()>=season1Needs[n-1]; }
- if(n==6){ return totalStars()>=season2Unlock; }
- if(n>6){ return season2Stars()>=season2Needs[n-6]; }
-}
+function totalStars(){
 
-function openRevisions(){
- if(localStorage.getItem("revUnlocked")!=="yes") return;
- toggle('s11');
-}
+ let t=0;
 
-function openBox(n){
- if(!canOpenBox(n)) return;
- toggle('s'+n);
-}
-
-function updateLocks(){
- for(let i=1;i<=10;i++){
-  let el=document.getElementById('l'+i);
-  if(i==1){el.style.display="none";continue;}
-
-  let need=0,have=0;
-  if(i<=5){ need=season1Needs[i-1]; have=totalStars(); }
-  else if(i==6){ need=season2Unlock; have=totalStars(); }
-  else{ need=season2Needs[i-6]; have=season2Stars(); }
-
-  let diff=need-have;
-  if(diff>0){ el.style.display="flex"; el.innerText=diff+" ⭐"; }
-  else el.style.display="none";
+ for(let k in stars){
+  t+=stars[k];
  }
 
- if(totalStars()>=season2Unlock){
-  document.getElementById("season2Title").innerText="🌟 Temporada 2";
- }
+ return t;
 }
 
-function build(){
- let level=1;
- boxes.forEach((b,i)=>{
-  let div=document.getElementById('s'+(i+1));
-  div.innerHTML="";
-  b.forEach((code,j)=>{
-    let btn=document.createElement("button");
-    let starsTxt=stars[level]?"⭐".repeat(stars[level]):"";
-    btn.innerHTML=(j+1)+"<br>"+starsTxt;
-    if(level<=progress){
-      btn.className="unlocked";
-      btn.onclick=()=>{
-        localStorage.setItem("c",level);
-        window.open("https://play.candies.monster/"+code,'_blank');
-      }
-    } else btn.className="locked";
-    div.appendChild(btn);
-    level++;
-  });
- });
+function toggle(id){
+ document
+ .getElementById(id)
+ .classList.toggle("hidden");
 }
 
-function finish(n){
- let lvl=parseInt(localStorage.getItem("c"));
- if(!lvl)return;
- stars[lvl]=Math.max(stars[lvl]||0,n);
- if(lvl>=progress) progress=lvl+1;
- localStorage.setItem("p",progress);
- localStorage.setItem("s",JSON.stringify(stars));
- location.reload();
+function music(){
+
+ let a =
+ document.getElementById("bgm");
+
+ a.play()
+ .catch(()=>alert("Clica outra vez"));
 }
 
-function startMusic(){
- let m=document.getElementById("music");
- if(!m.src){
-  m.src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_game_loop.mp3";
-  m.load();
- }
- m.play().catch(()=>alert("Clica outra vez"));
+function showCode(){
+
+ document
+ .getElementById("codeInput")
+ .classList.remove("hidden");
 }
 
-function showCode(){document.getElementById("code").style.display="inline"}
+function code(e){
 
-function applyCode(e){
- if(e.key==="Enter" && e.target.value==="Zeptolab"){
-  let total=0; boxes.forEach(b=> total+=b.length);
-  for(let i=1;i<=total+30;i++){stars[i]=3;}
-  localStorage.setItem("revUnlocked","yes");
-  progress=999;
-  localStorage.setItem("p",progress);
-  localStorage.setItem("s",JSON.stringify(stars));
+ if(
+  e.key==="Enter" &&
+  e.target.value==="Zeptolab"
+ ){
+
+  unlocked=999;
+
+  for(let i=1;i<=300;i++){
+   stars[i]=3;
+  }
+
+  save();
   location.reload();
  }
 }
 
-function resetProgress(){
+function save(){
+
+ localStorage.setItem(
+  "stars",
+  JSON.stringify(stars)
+ );
+
+ localStorage.setItem(
+  "unlock",
+  unlocked
+ );
+
+ localStorage.setItem(
+  "current",
+  current
+ );
+}
+
+function build(){
+
+ let global=1;
+
+ for(let b=1;b<=10;b++){
+
+  let div =
+  document.getElementById(
+   "b"+b
+  );
+
+  boxes[b].forEach((lvl,i)=>{
+
+   let btn =
+   document.createElement("button");
+
+   btn.className="level";
+
+   if(global>unlocked){
+    btn.classList.add(
+     "lockedLevel"
+    );
+   }
+
+   let st =
+   stars[global]
+   ? "⭐".repeat(stars[global])
+   : "";
+
+   btn.innerHTML=
+   (i+1)+"<br>"+st;
+
+   btn.onclick=()=>{
+
+    if(global>unlocked) return;
+
+    current=global;
+
+    save();
+
+    window.open(
+     "https://play.candies.monster/"+lvl,
+     "_blank"
+    );
+   };
+
+   div.appendChild(btn);
+
+   global++;
+
+  });
+
+ }
+
+ buildRevisions();
+ updateLocks();
+}
+
+function buildRevisions(){
+
+ let div =
+ document.getElementById("b11");
+
+ revisions.forEach((r,i)=>{
+
+  let btn =
+  document.createElement("button");
+
+  btn.className="level";
+
+  if(totalStars()<r[1]){
+   btn.classList.add(
+    "lockedLevel"
+   );
+  }
+
+  btn.innerHTML=
+  "R-"+(i+1)+"<br>"+r[1]+"⭐";
+
+  btn.onclick=()=>{
+
+   if(totalStars()<r[1]) return;
+
+   window.open(
+    "https://play.candies.monster/"+r[0],
+    "_blank"
+   );
+  };
+
+  div.appendChild(btn);
+ });
+}
+
+function giveStars(n){
+
+ stars[current]=n;
+
+ if(current===unlocked){
+  unlocked++;
+ }
+
+ save();
+
+ location.reload();
+}
+
+function openSeason1(box,id){
+
+ const needs={
+  2:35,
+  3:70,
+  4:100,
+  5:130
+ };
+
+ if(totalStars()>=needs[box]){
+  toggle(id);
+ }
+}
+
+function openSeason2(box,id){
+
+ if(totalStars()>=180){
+
+  toggle(id);
+
+  document
+  .getElementById("s2title")
+  .innerHTML=
+  "🌟 Temporada 2";
+ }
+}
+
+function openSeason2Extra(box,id,need){
+
+ let s2 =
+ Math.max(
+  0,
+  totalStars()-180
+ );
+
+ if(s2>=need){
+  toggle(id);
+ }
+}
+
+function updateLocks(){
+
+ const s1={
+  2:35,
+  3:70,
+  4:100,
+  5:130
+ };
+
+ for(let k in s1){
+
+  if(totalStars()>=s1[k]){
+
+   document
+   .getElementById(
+    "lock"+k
+   )
+   .style.display="none";
+  }
+ }
+
+ if(totalStars()>=180){
+
+  document
+  .getElementById(
+   "lock6"
+  )
+  .style.display="none";
+
+  document
+  .getElementById(
+   "s2title"
+  )
+  .innerHTML=
+  "🌟 Temporada 2";
+ }
+
+ let s2 =
+ Math.max(
+  0,
+  totalStars()-180
+ );
+
+ const s2locks={
+  7:40,
+  8:70,
+  9:100,
+  10:130
+ };
+
+ for(let k in s2locks){
+
+  if(s2>=s2locks[k]){
+
+   document
+   .getElementById(
+    "lock"+k
+   )
+   .style.display="none";
+  }
+ }
+
+}
+
+function reset(){
+
  localStorage.clear();
+
  location.reload();
 }
 
 build();
-updateLocks();
+
 </script>
+
 </body>
 </html>
