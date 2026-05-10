@@ -2,35 +2,78 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut The Rope Custom</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cut The Rope Custom V11</title>
 
 <style>
 
 body{
- background:#f4e3c3;
- font-family:Arial;
- text-align:center;
  margin:0;
  padding:20px;
+ background:#f5e2bf;
+ font-family:Arial;
+ text-align:center;
 }
 
 h1,h2{
- color:#3b2a1a;
+ color:#3a2b1a;
 }
 
 .box{
- background:#c79b6b;
  width:340px;
- margin:20px auto;
- border-radius:20px;
- padding:15px;
+ margin:25px auto;
+ background:#c28d5d;
+ border-radius:25px;
+ padding:18px;
  position:relative;
- box-shadow:0 5px 12px rgba(0,0,0,.2);
- transition:.2s;
+ box-shadow:0 5px 15px rgba(0,0,0,.25);
+ animation:appear .35s ease;
 }
 
-.box:hover{
- transform:scale(1.02);
+@keyframes appear{
+ from{
+  opacity:0;
+  transform:translateY(15px);
+ }
+ to{
+  opacity:1;
+  transform:translateY(0);
+ }
+}
+
+.boxTitle{
+ font-size:28px;
+ font-weight:bold;
+ color:white;
+ cursor:pointer;
+}
+
+.grid{
+ margin-top:15px;
+ display:grid;
+ grid-template-columns:repeat(5,55px);
+ gap:10px;
+ justify-content:center;
+}
+
+.level{
+ width:55px;
+ height:55px;
+ border:none;
+ border-radius:15px;
+ background:#3498db;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
+ transition:.15s;
+}
+
+.level:hover{
+ transform:scale(1.08);
+}
+
+.locked{
+ background:#777;
 }
 
 .lock{
@@ -38,63 +81,53 @@ h1,h2{
  inset:0;
  background:rgba(0,0,0,.6);
  color:white;
- border-radius:20px;
+ border-radius:25px;
  display:flex;
  align-items:center;
  justify-content:center;
- font-size:22px;
+ font-size:28px;
  font-weight:bold;
-}
-
-.grid{
- display:grid;
- grid-template-columns:repeat(5,55px);
- gap:8px;
- justify-content:center;
- margin-top:10px;
-}
-
-.level{
- height:55px;
- border:none;
- border-radius:12px;
- background:#3498db;
- color:white;
- font-weight:bold;
- cursor:pointer;
-}
-
-.level:hover{
- transform:scale(1.05);
-}
-
-.lockedLevel{
- background:#777;
 }
 
 .hidden{
  display:none;
 }
 
-#revisionBox{
- margin-top:80px;
-}
-
 .controls{
- margin-top:30px;
+ margin-top:40px;
 }
 
 .starBtn{
- font-size:22px;
- margin:5px;
+ font-size:28px;
  cursor:pointer;
+ margin:6px;
+ border:none;
+ background:white;
+ border-radius:10px;
+ padding:10px;
+}
+
+#revisionBox{
+ margin-top:90px;
 }
 
 #codeInput{
- margin-top:10px;
- padding:8px;
- border-radius:8px;
+ padding:10px;
+ border-radius:10px;
  border:none;
+ margin-top:10px;
+}
+
+@media(max-width:600px){
+
+ .box{
+  width:95%;
+ }
+
+ .grid{
+  grid-template-columns:repeat(4,55px);
+ }
+
 }
 
 </style>
@@ -104,89 +137,111 @@ h1,h2{
 
 <h1>🍬 Cut The Rope Custom</h1>
 
-<button onclick="music()">🎵 Música</button>
+<button onclick="playMusic()">🎵 Música</button>
 <button onclick="showCode()">🔓 Código</button>
 
-<div>
+<br><br>
+
 <input
- id="codeInput"
- class="hidden"
- placeholder="Código..."
- onkeydown="code(event)"
+id="codeInput"
+class="hidden"
+placeholder="Escreve o código..."
+onkeydown="applyCode(event)"
 >
-</div>
 
 <h2>🌟 Temporada 1</h2>
 
 <div class="box">
-<h3 onclick="toggle('b1')">📦 Caixa Inicial</h3>
-<div id="b1" class="grid"></div>
+<div class="boxTitle" onclick="toggleBox('b1')">
+📦 Caixa Inicial
+</div>
+<div class="grid" id="b1"></div>
 </div>
 
 <div class="box">
-<h3 onclick="openSeason1(2,'b2')">✨ Magia</h3>
-<div id="lock2" class="lock">35 ⭐</div>
-<div id="b2" class="grid hidden"></div>
+<div class="boxTitle" onclick="openBox('b2',35)">
+✨ Magia
+</div>
+<div class="lock" id="lock2">35 ⭐</div>
+<div class="grid hidden" id="b2"></div>
 </div>
 
 <div class="box">
-<h3 onclick="openSeason1(3,'b3')">⚠️ Perigos</h3>
-<div id="lock3" class="lock">70 ⭐</div>
-<div id="b3" class="grid hidden"></div>
+<div class="boxTitle" onclick="openBox('b3',70)">
+⚠️ Perigos
+</div>
+<div class="lock" id="lock3">70 ⭐</div>
+<div class="grid hidden" id="b3"></div>
 </div>
 
 <div class="box">
-<h3 onclick="openSeason1(4,'b4')">🌌 Distância</h3>
-<div id="lock4" class="lock">100 ⭐</div>
-<div id="b4" class="grid hidden"></div>
+<div class="boxTitle" onclick="openBox('b4',100)">
+🌌 Distância
+</div>
+<div class="lock" id="lock4">100 ⭐</div>
+<div class="grid hidden" id="b4"></div>
 </div>
 
 <div class="box">
-<h3 onclick="openSeason1(5,'b5')">☠️ Zona de Risco</h3>
-<div id="lock5" class="lock">130 ⭐</div>
-<div id="b5" class="grid hidden"></div>
+<div class="boxTitle" onclick="openBox('b5',130)">
+☠️ Zona de Risco
+</div>
+<div class="lock" id="lock5">130 ⭐</div>
+<div class="grid hidden" id="b5"></div>
 </div>
 
-<h2 id="s2title">🔒 Temporada 2</h2>
+<h2 id="season2Title">🔒 Temporada 2</h2>
 
 <div class="box">
-<h3 onclick="openSeason2(6,'b6')">👻 Fase Fantasma</h3>
-<div id="lock6" class="lock">180 ⭐</div>
-<div id="b6" class="grid hidden"></div>
+<div class="boxTitle" onclick="openGhostBox()">
+👻 Fase Fantasma
 </div>
-
-<div class="box">
-<h3 onclick="openSeason2Extra(7,'b7',40)">🏮 Lanternas</h3>
-<div id="lock7" class="lock">40 ⭐</div>
-<div id="b7" class="grid hidden"></div>
+<div class="lock" id="lock6">180 ⭐</div>
+<div class="grid hidden" id="b6"></div>
 </div>
 
 <div class="box">
-<h3 onclick="openSeason2Extra(8,'b8',70)">🐭 Ratos</h3>
-<div id="lock8" class="lock">70 ⭐</div>
-<div id="b8" class="grid hidden"></div>
+<div class="boxTitle" onclick="openSeason2('b7',40)">
+🏮 Lanternas
+</div>
+<div class="lock" id="lock7">40 ⭐</div>
+<div class="grid hidden" id="b7"></div>
 </div>
 
 <div class="box">
-<h3 onclick="openSeason2Extra(9,'b9',100)">💡 Noite</h3>
-<div id="lock9" class="lock">100 ⭐</div>
-<div id="b9" class="grid hidden"></div>
+<div class="boxTitle" onclick="openSeason2('b8',70)">
+🐭 Ratos
+</div>
+<div class="lock" id="lock8">70 ⭐</div>
+<div class="grid hidden" id="b8"></div>
 </div>
 
 <div class="box">
-<h3 onclick="openSeason2Extra(10,'b10',130)">⚙️ Mecânica</h3>
-<div id="lock10" class="lock">130 ⭐</div>
-<div id="b10" class="grid hidden"></div>
+<div class="boxTitle" onclick="openSeason2('b9',100)">
+💡 Noite
+</div>
+<div class="lock" id="lock9">100 ⭐</div>
+<div class="grid hidden" id="b9"></div>
 </div>
 
-<div id="revisionBox" class="box">
-<h3 onclick="toggle('b11')">🛠️ Caixa Revisões</h3>
-<div id="b11" class="grid hidden"></div>
+<div class="box">
+<div class="boxTitle" onclick="openSeason2('b10',130)">
+⚙️ Mecânica
+</div>
+<div class="lock" id="lock10">130 ⭐</div>
+<div class="grid hidden" id="b10"></div>
+</div>
+
+<div class="box" id="revisionBox">
+<div class="boxTitle" onclick="toggleBox('b11')">
+🛠️ Caixa Revisões
+</div>
+<div class="grid hidden" id="b11"></div>
 </div>
 
 <div class="controls">
 
-<h3>⭐ Dar estrelas</h3>
+<h3>⭐ Botões de estrelas</h3>
 
 <button class="starBtn" onclick="giveStars(1)">⭐</button>
 <button class="starBtn" onclick="giveStars(2)">⭐⭐</button>
@@ -194,7 +249,7 @@ h1,h2{
 
 <br><br>
 
-<button onclick="reset()">🗑️ Reset</button>
+<button onclick="resetProgress()">🗑️ Reset</button>
 
 </div>
 
@@ -262,24 +317,48 @@ const boxes = {
 };
 
 const revisions = [
-["lfvw",3],["GYJz",9],["BSbp",9],["IyYA",15],
-["CBzO",15],["vcVp",18],["TsTk",21],["zNMr",21],
-["klMI",33],["cghk",33],["uCyi",33],["OIxT",48],
-["xotj",66],["InGz",78],["VHJm",78],["xcfp",78],
-["fIgP",78],["Bxhw",78],["TuKG",78],["cKOK",87],
-["eVog",96],["VESv",108],["Ufxb",108],["VHwC",108],
-["AAUs",123],["rpsn",123],["KFzp",138],["rUsM",138],
-["tCTP",150],["XWMj",180]
+
+["lfvw",3],
+["GYJz",9],
+["BSbp",9],
+["IyYA",15],
+["CBzO",15],
+["vcVp",18],
+["TsTk",21],
+["zNMr",21],
+["klMI",33],
+["cghk",33],
+["uCyi",33],
+["OIxT",48],
+["xotj",66],
+["InGz",78],
+["VHJm",78],
+["xcfp",78],
+["fIgP",78],
+["Bxhw",78],
+["TuKG",78],
+["cKOK",87],
+["eVog",96],
+["VESv",108],
+["Ufxb",108],
+["VHwC",108],
+["AAUs",123],
+["rpsn",123],
+["KFzp",138],
+["rUsM",138],
+["tCTP",150],
+["XWMj",180]
+
 ];
 
 let stars =
 JSON.parse(localStorage.getItem("stars")) || {};
 
 let unlocked =
-parseInt(localStorage.getItem("unlock")) || 1;
+parseInt(localStorage.getItem("unlocked")) || 1;
 
-let current =
-parseInt(localStorage.getItem("current")) || 1;
+let currentLevel =
+parseInt(localStorage.getItem("currentLevel")) || 1;
 
 function totalStars(){
 
@@ -292,46 +371,6 @@ function totalStars(){
  return t;
 }
 
-function toggle(id){
- document
- .getElementById(id)
- .classList.toggle("hidden");
-}
-
-function music(){
-
- let a =
- document.getElementById("bgm");
-
- a.play()
- .catch(()=>alert("Clica outra vez"));
-}
-
-function showCode(){
-
- document
- .getElementById("codeInput")
- .classList.remove("hidden");
-}
-
-function code(e){
-
- if(
-  e.key==="Enter" &&
-  e.target.value==="Zeptolab"
- ){
-
-  unlocked=999;
-
-  for(let i=1;i<=300;i++){
-   stars[i]=3;
-  }
-
-  save();
-  location.reload();
- }
-}
-
 function save(){
 
  localStorage.setItem(
@@ -340,53 +379,226 @@ function save(){
  );
 
  localStorage.setItem(
-  "unlock",
+  "unlocked",
   unlocked
  );
 
  localStorage.setItem(
-  "current",
-  current
+  "currentLevel",
+  currentLevel
  );
 }
 
-function build(){
+function toggleBox(id){
+
+ document
+ .getElementById(id)
+ .classList.toggle("hidden");
+}
+
+function playMusic(){
+
+ let music =
+ document.getElementById("bgm");
+
+ music.play()
+ .catch(()=>{
+
+  alert(
+   "Clica novamente no botão da música."
+  );
+
+ });
+
+}
+
+function showCode(){
+
+ document
+ .getElementById("codeInput")
+ .classList.toggle("hidden");
+}
+
+function applyCode(e){
+
+ if(
+  e.key==="Enter" &&
+  e.target.value==="Zeptolab"
+ ){
+
+  unlocked=999;
+
+  for(let i=1;i<=500;i++){
+   stars[i]=3;
+  }
+
+  save();
+
+  location.reload();
+ }
+
+}
+
+function openBox(id,need){
+
+ if(totalStars()>=need){
+
+  toggleBox(id);
+
+ }
+
+}
+
+function openGhostBox(){
+
+ if(totalStars()>=180){
+
+  toggleBox("b6");
+
+  document
+  .getElementById("season2Title")
+  .innerHTML=
+  "🌟 Temporada 2";
+
+ }
+
+}
+
+function openSeason2(id,need){
+
+ let s2 =
+ Math.max(0,totalStars()-180);
+
+ if(s2>=need){
+
+  toggleBox(id);
+
+ }
+
+}
+
+function updateLocks(){
+
+ const season1 = {
+  2:35,
+  3:70,
+  4:100,
+  5:130
+ };
+
+ for(let k in season1){
+
+  if(
+   totalStars()>=season1[k]
+  ){
+
+   document
+   .getElementById("lock"+k)
+   .style.display="none";
+
+  }
+
+ }
+
+ if(totalStars()>=180){
+
+  document
+  .getElementById("lock6")
+  .style.display="none";
+
+  document
+  .getElementById("season2Title")
+  .innerHTML=
+  "🌟 Temporada 2";
+
+ }
+
+ const season2 = {
+  7:40,
+  8:70,
+  9:100,
+  10:130
+ };
+
+ let s2 =
+ Math.max(0,totalStars()-180);
+
+ for(let k in season2){
+
+  if(s2>=season2[k]){
+
+   document
+   .getElementById("lock"+k)
+   .style.display="none";
+
+  }
+
+ }
+
+}
+
+function giveStars(n){
+
+ stars[currentLevel]=n;
+
+ if(currentLevel===unlocked){
+  unlocked++;
+ }
+
+ save();
+
+ location.reload();
+}
+
+function resetProgress(){
+
+ localStorage.clear();
+
+ location.reload();
+}
+
+function createLevels(){
 
  let global=1;
 
  for(let b=1;b<=10;b++){
 
   let div =
-  document.getElementById(
-   "b"+b
-  );
+  document.getElementById("b"+b);
 
   boxes[b].forEach((lvl,i)=>{
+
+   let levelNumber = global;
 
    let btn =
    document.createElement("button");
 
    btn.className="level";
 
-   if(global>unlocked){
+   if(levelNumber>unlocked){
+
     btn.classList.add(
-     "lockedLevel"
+     "locked"
     );
+
    }
 
    let st =
-   stars[global]
-   ? "⭐".repeat(stars[global])
+   stars[levelNumber]
+   ? "⭐".repeat(stars[levelNumber])
    : "";
 
-   btn.innerHTML=
+   btn.innerHTML =
    (i+1)+"<br>"+st;
 
-   btn.onclick=()=>{
+   btn.onclick = function(){
 
-    if(global>unlocked) return;
+    if(levelNumber>unlocked){
+     return;
+    }
 
-    current=global;
+    currentLevel =
+    levelNumber;
 
     save();
 
@@ -394,6 +606,7 @@ function build(){
      "https://play.candies.monster/"+lvl,
      "_blank"
     );
+
    };
 
    div.appendChild(btn);
@@ -404,170 +617,56 @@ function build(){
 
  }
 
- buildRevisions();
- updateLocks();
 }
 
-function buildRevisions(){
+function createRevisionLevels(){
 
  let div =
  document.getElementById("b11");
 
- revisions.forEach((r,i)=>{
+ revisions.forEach((lvl,i)=>{
 
   let btn =
   document.createElement("button");
 
   btn.className="level";
 
-  if(totalStars()<r[1]){
+  let needed =
+  lvl[1];
+
+  if(totalStars()<needed){
+
    btn.classList.add(
-    "lockedLevel"
+    "locked"
    );
+
   }
 
-  btn.innerHTML=
-  "R-"+(i+1)+"<br>"+r[1]+"⭐";
+  btn.innerHTML =
+  "R"+(i+1)+"<br>"+needed+"⭐";
 
-  btn.onclick=()=>{
+  btn.onclick = function(){
 
-   if(totalStars()<r[1]) return;
+   if(totalStars()<needed){
+    return;
+   }
 
    window.open(
-    "https://play.candies.monster/"+r[0],
+    "https://play.candies.monster/"+lvl[0],
     "_blank"
    );
+
   };
 
   div.appendChild(btn);
+
  });
-}
-
-function giveStars(n){
-
- stars[current]=n;
-
- if(current===unlocked){
-  unlocked++;
- }
-
- save();
-
- location.reload();
-}
-
-function openSeason1(box,id){
-
- const needs={
-  2:35,
-  3:70,
-  4:100,
-  5:130
- };
-
- if(totalStars()>=needs[box]){
-  toggle(id);
- }
-}
-
-function openSeason2(box,id){
-
- if(totalStars()>=180){
-
-  toggle(id);
-
-  document
-  .getElementById("s2title")
-  .innerHTML=
-  "🌟 Temporada 2";
- }
-}
-
-function openSeason2Extra(box,id,need){
-
- let s2 =
- Math.max(
-  0,
-  totalStars()-180
- );
-
- if(s2>=need){
-  toggle(id);
- }
-}
-
-function updateLocks(){
-
- const s1={
-  2:35,
-  3:70,
-  4:100,
-  5:130
- };
-
- for(let k in s1){
-
-  if(totalStars()>=s1[k]){
-
-   document
-   .getElementById(
-    "lock"+k
-   )
-   .style.display="none";
-  }
- }
-
- if(totalStars()>=180){
-
-  document
-  .getElementById(
-   "lock6"
-  )
-  .style.display="none";
-
-  document
-  .getElementById(
-   "s2title"
-  )
-  .innerHTML=
-  "🌟 Temporada 2";
- }
-
- let s2 =
- Math.max(
-  0,
-  totalStars()-180
- );
-
- const s2locks={
-  7:40,
-  8:70,
-  9:100,
-  10:130
- };
-
- for(let k in s2locks){
-
-  if(s2>=s2locks[k]){
-
-   document
-   .getElementById(
-    "lock"+k
-   )
-   .style.display="none";
-  }
- }
 
 }
 
-function reset(){
-
- localStorage.clear();
-
- location.reload();
-}
-
-build();
+createLevels();
+createRevisionLevels();
+updateLocks();
 
 </script>
 
